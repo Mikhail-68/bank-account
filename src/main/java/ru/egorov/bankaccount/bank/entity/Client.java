@@ -14,12 +14,16 @@ import java.util.List;
 @Entity
 public class Client {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String accountNumber;
 
     @JsonIgnore
     @OneToMany(mappedBy = "client")
     private List<Limit> limits;
+    @JsonIgnore
+    @OneToMany(mappedBy = "client")
+    private List<Transaction> transactions;
 
     public Client(String accountNumber) {
         this.accountNumber = accountNumber;

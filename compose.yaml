@@ -12,7 +12,7 @@ services:
 
   postgres:
     image: 'postgres:latest'
-    restart: 'always'
+#    restart: 'always'
     env_file: ./.env
     container_name: 'bank-postgres-db'
     environment:

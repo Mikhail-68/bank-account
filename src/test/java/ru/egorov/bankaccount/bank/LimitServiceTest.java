@@ -11,7 +11,7 @@ import ru.egorov.bankaccount.bank.entity.Limit;
 import ru.egorov.bankaccount.bank.enums.ExpenseCategory;
 import ru.egorov.bankaccount.bank.repository.ClientRepository;
 import ru.egorov.bankaccount.bank.repository.LimitRepository;
-import ru.egorov.bankaccount.bank.service.ClientService;
+import ru.egorov.bankaccount.bank.service.LimitService;
 
 import java.util.List;
 
@@ -21,9 +21,9 @@ import java.util.List;
 //)
 @SpringBootTest
 @ActiveProfiles("test")
-public class ClientServiceTest {
+public class LimitServiceTest {
     @Autowired
-    private ClientService clientService;
+    private LimitService limitService;
     @Autowired
     private LimitRepository limitRepository;
     @Autowired
@@ -36,7 +36,7 @@ public class ClientServiceTest {
         double sum = 123.456;
         ExpenseCategory expectedExpenseCategory = ExpenseCategory.SERVICE;
         clientRepository.save(new Client(expectedAccountNumber));
-        clientService.saveNewLimit(expectedAccountNumber, sum, expectedExpenseCategory);
+        limitService.saveNewLimit(expectedAccountNumber, sum, expectedExpenseCategory);
 
         List<Limit> actualLimitList = limitRepository.findByAccountNumberClient(expectedAccountNumber);
         Limit actualLimit = actualLimitList.get(0);

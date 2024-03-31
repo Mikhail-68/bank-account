@@ -6,27 +6,28 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import ru.egorov.bankaccount.bank.dto.LimitDTO;
-import ru.egorov.bankaccount.bank.dto.SaveLimitDTO;
+import ru.egorov.bankaccount.bank.dto.out.LimitDTO;
+import ru.egorov.bankaccount.bank.dto.in.SaveLimitDTO;
 import ru.egorov.bankaccount.bank.entity.Limit;
-import ru.egorov.bankaccount.bank.service.ClientService;
+import ru.egorov.bankaccount.bank.enums.ExpenseCategory;
+import ru.egorov.bankaccount.bank.service.LimitService;
 
 import java.util.List;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("api/v1")
-public class ClientController {
-    private final ClientService clientService;
+public class LimitController {
+    private final LimitService limitService;
 
     @Autowired
-    public ClientController(ClientService clientService) {
-        this.clientService = clientService;
+    public LimitController(LimitService limitService) {
+        this.limitService = limitService;
     }
 
     @GetMapping("/limit/{id}")
     public ResponseEntity<Limit> getLimitById(@PathVariable int id) {
-        Optional<Limit> limit = clientService.getLimitById(id);
+        Optional<Limit> limit = limitService.getLimitById(id);
         if(limit.isEmpty())
             return ResponseEntity.status(HttpStatusCode.valueOf(400)).build();
         return ResponseEntity.ok(limit.get());
@@ -34,7 +35,7 @@ public class ClientController {
 
     @GetMapping("user/limit/{id}")
     public ResponseEntity<List<LimitDTO>> getLimitByClient(@PathVariable("id") String accountNumber) {
-        return ResponseEntity.ok(clientService.getLimitByClient(accountNumber));
+        return ResponseEntity.ok(limitService.getLimitByClient(accountNumber));
     }
 
     @PostMapping("user/limit")
@@ -42,7 +43,14 @@ public class ClientController {
         if(bindingResult.hasErrors()) {
             return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
         }
-        clientService.saveNewLimit(newLimit.getClientAccountNumber(), newLimit.getSum(), newLimit.getExpenseCategory());
+        limitService.saveNewLimit(newLimit.getClientAccountNumber(), newLimit.getSum(), newLimit.getExpenseCategory());
         return ResponseEntity.accepted().build();
+    }
+
+    @GetMapping("user/lastLimit")
+    public ResponseEntity<Limit> getLastLimitThisMonth(
+            @RequestParam String accountNumber,
+            @RequestParam ExpenseCategory expenseCategory) {
+        return ResponseEntity.ok(limitService.getLastLimitThisMonth(accountNumber, expenseCategory));
     }
 }

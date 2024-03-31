@@ -1,26 +1,20 @@
 package ru.egorov.bankaccount.bank.service;
 
-import ru.egorov.bankaccount.bank.dto.LimitDTO;
-import ru.egorov.bankaccount.bank.entity.Limit;
-import ru.egorov.bankaccount.bank.enums.ExpenseCategory;
+import ru.egorov.bankaccount.bank.entity.Client;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface ClientService {
     /**
-     * Возвращает лимит по ее id
-     * @param id номер лимита
-     * @return лимит
+     * Добавить клиента в БД если он отсутствует
+     * @param accountNumber номер счета клиента
      */
-    Optional<Limit> getLimitById(int id);
+    void saveClientIfDoesNotExist(String accountNumber);
 
     /**
-     * Возвращает список лимитов клиента
-     * @param accountNumber номер банковского счета клиента
-     * @return список выставленных лимитов у клиента
+     * Поиск клиента по его номеру счета
+     * @param accountNumber номер счета клиента
+     * @return Клиент
      */
-    List<LimitDTO> getLimitByClient(String accountNumber);
-
-    void saveNewLimit(String accountNumber, double sum, ExpenseCategory expenseCategory);
+    Optional<Client> findClientByAccountNumber(String accountNumber);
 }

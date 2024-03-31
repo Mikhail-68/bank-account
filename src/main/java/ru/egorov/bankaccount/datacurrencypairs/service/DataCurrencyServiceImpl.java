@@ -28,23 +28,36 @@ public class DataCurrencyServiceImpl implements DataCurrencyService {
         this.cacheRepository = cacheRepository;
     }
 
+    @Override
     public BigDecimal getCurrentValue(String value) {
+        log.debug("Получение валюты: " + value);
+
+        if(value.equals(new StringBuilder(value).reverse().toString()) && value.contains("/")) {
+            log.debug("Возврат валюты: 1. Так как валюты одинаковы (пример: USD/USD)");
+            return BigDecimal.ONE;
+        }
+
         Optional<CurrencyCache> currencyCache = cacheRepository.findById(value);
-        if (currencyCache.isPresent() && currencyCache.get().getDate().equals(LocalDate.now())) {
+        if (currencyCache.isPresent() && currencyCache.get().getDate().equals(LocalDate.now()) && currencyCache.get().getValue() != null) {
             log.debug("Получение валюты из кэша");
             return currencyCache.get().getValue();
         }
 
-        log.debug("Получение валюты из API");
+        log.debug("Получение курса валюты из API");
         CurrencyDto currencyDto = restTemplate.getForObject(String.format(
                 "https://api.twelvedata.com/eod?symbol=%s&apikey=%s",
                 value, apiKey
         ), CurrencyDto.class);
+
+        if(currencyDto == null || currencyDto.getValue() == null) {
+            throw new IllegalArgumentException("Неправильный формат обозначения ценной бумаги");
+        }
         log.debug("Кэшируем полученные данные в БД");
         cacheRepository.save(new CurrencyCache(value, LocalDate.now(), currencyDto.getValue()));
         return currencyDto.getValue();
     }
 
+    @Override
     public BigDecimal getCurrentValuePairs(String value1, String value2) {
         return getCurrentValue(value1 + "/" + value2);
     }

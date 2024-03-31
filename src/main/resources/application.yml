@@ -1,10 +1,12 @@
 application:
   twelvedata.apikey: '6e00d314e77840d4ac18eef23682f49f'
+  limit.startValue: 1000
+  db.currency: USD
 
 spring:
   application.name: 'bank-account'
 
-  docker.compose.profiles.active: default, test
+  docker.compose.profiles.active: [default, test]
 
   liquibase:
     enabled: 'true'
@@ -14,19 +16,16 @@ spring:
   cassandra:
     local-datacenter: 'datacenter1'
     keyspace-name: 'currencyCache'
-    schema-action: 'RECREATE'
+#    schema-action: 'RECREATE'
 
     keyspace.create: "CREATE KEYSPACE currencyCache WITH replication = {'class': 'NetworkTopologyStrategy', 'DC1': 1};"
-#    cassandra.keyspace_log.create=CREATE KEYSPACE myKeySpace_log WITH replication = {'class': 'NetworkTopologyStrategy', 'DC1':
-#                                                                                                                           1, 'DC2': 1};
 
   data:
     cassandra:
-#      local-datacenter: 'datacenter1'
+      local-datacenter: 'datacenter1'
       keyspace-name: 'currencyCache'
       port: '9142'
       contactpoints: 'localhost'
-      schema-action: 'RECREATE'
 
 
   jpa:
@@ -46,3 +45,4 @@ logging:
   level:
     org.springframework.web: ERROR
     ru.egorov: DEBUG
+    org.hibernate.engine.transaction.internal.TransactionImpl: DEBUG

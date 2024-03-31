@@ -13,8 +13,8 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "\"limit\"")
-public class Limit {
+@Table(name = "\"transaction\"")
+public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -22,13 +22,16 @@ public class Limit {
     private Client client;
     private LocalDateTime date;
     private BigDecimal sum;
+    private boolean limitExceeded;
     @Enumerated(EnumType.STRING)
     private ExpenseCategory expenseCategory;
 
-    public Limit(Client client, LocalDateTime date, BigDecimal sum, ExpenseCategory expenseCategory) {
+    public Transaction(Client client, LocalDateTime date, BigDecimal sum,
+                       boolean limitExceeded, ExpenseCategory expenseCategory) {
         this.client = client;
         this.date = date;
         this.sum = sum;
+        this.limitExceeded = limitExceeded;
         this.expenseCategory = expenseCategory;
     }
 }

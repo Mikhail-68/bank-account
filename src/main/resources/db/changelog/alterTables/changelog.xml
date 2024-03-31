@@ -7,5 +7,6 @@
     <include file="2024-03-31-alter-limit-table.xml" relativeToChangelogFile="true"/>
     <include file="2024-03-31-alter-table-client.xml" relativeToChangelogFile="true"/>
     <include file="2024-03-31-12-40-alter-table-limit.xml" relativeToChangelogFile="true"/>
+    <include file="2024-03-31-18-10-alter-table-transaction-limit-exceeded.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

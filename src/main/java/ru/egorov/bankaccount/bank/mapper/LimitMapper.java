@@ -1,18 +1,22 @@
 package ru.egorov.bankaccount.bank.mapper;
 
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.ReportingPolicy;
-import ru.egorov.bankaccount.bank.dto.LimitDTO;
+import ru.egorov.bankaccount.bank.dto.out.LimitDTO;
 import ru.egorov.bankaccount.bank.entity.Limit;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public interface LimitMapper {
-    Limit toLimit(LimitDTO limitDTO);
-    LimitDTO toLimitDTO(Limit limit);
+@Mapper(componentModel = "spring")
+public abstract class LimitMapper {
 
-    List<Limit> toLimitList(List<LimitDTO> limitDTO);
-    List<LimitDTO> toLimitDTOList(List<Limit> limit);
+    public LimitDTO toLimitDTO(Limit limit) {
+        return new LimitDTO(
+                limit.getId(),
+                limit.getDate(),
+                limit.getSum().doubleValue(),
+                limit.getExpenseCategory()
+        );
+    }
+
+    public abstract List<LimitDTO> toLimitDTOList(List<Limit> limit);
 }
