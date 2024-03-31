@@ -26,20 +26,26 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.boot:spring-boot-starter-data-cassandra'
-//	implementation 'com.datastax.astra:astra-spring-boot-starter:0.3.0'
 
 //	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
-//	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 //	implementation 'org.springframework.boot:spring-boot-starter-data-rest'
 //	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-//	implementation 'org.liquibase:liquibase-core'
+	implementation 'org.liquibase:liquibase-core'
+
 	compileOnly 'org.projectlombok:lombok'
+	implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+	testAnnotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+	implementation 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
+
+
 	developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
-//	runtimeOnly 'com.h2database:h2'
-//	runtimeOnly 'org.postgresql:postgresql'
+	runtimeOnly 'com.h2database:h2'
+	runtimeOnly 'org.postgresql:postgresql'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
