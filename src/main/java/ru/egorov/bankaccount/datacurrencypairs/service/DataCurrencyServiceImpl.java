@@ -17,7 +17,7 @@ import java.util.Optional;
 @Service
 public class DataCurrencyServiceImpl implements DataCurrencyService {
 
-    @Value("${twelvedata.apikey}")
+    @Value("${application.twelvedata.apikey}")
     private String apiKey;
     private final RestTemplate restTemplate = new RestTemplate();
 
@@ -48,5 +48,4 @@ public class DataCurrencyServiceImpl implements DataCurrencyService {
     public BigDecimal getCurrentValuePairs(String value1, String value2) {
         return getCurrentValue(value1 + "/" + value2);
     }
-
 }
