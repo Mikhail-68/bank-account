@@ -70,7 +70,12 @@ public class DataCurrencyServiceImpl implements DataCurrencyService {
     }
 
     @Override
-    public BigDecimal getCurrentValuePairsDefault(String value) {
+    public BigDecimal getCurrentValuePairsToDefault(String value) {
         return getCurrentValuePairs(value, currencyDb);
+    }
+
+    @Override
+    public BigDecimal getCurrentValuePairsFromDefault(String value) {
+        return getCurrentValuePairs(currencyDb, value);
     }
 }

@@ -58,7 +58,7 @@ public class LimitServiceImpl implements LimitService {
     @Override
     public void saveNewLimit(String accountNumber, double sum, String currency, ExpenseCategory expenseCategory) {
         log.debug("Сохранение нового лимита для счета: " + accountNumber);
-        BigDecimal currencyConvert = currencyService.getCurrentValuePairsDefault(currency)
+        BigDecimal currencyConvert = currencyService.getCurrentValuePairsToDefault(currency)
                 .multiply(BigDecimal.valueOf(sum));
         currencyConvert = RoundingBigDecimal.roundBigDecimal(currencyConvert);
         limitRepository.save(accountNumber, currencyConvert.doubleValue(), expenseCategory.name());

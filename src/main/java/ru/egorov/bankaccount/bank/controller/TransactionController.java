@@ -5,8 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import ru.egorov.bankaccount.bank.dto.outDto.MessageDTO;
 import ru.egorov.bankaccount.bank.dto.in.NewTransactionDTO;
+import ru.egorov.bankaccount.bank.dto.outDto.MessageDTO;
+import ru.egorov.bankaccount.bank.dto.outDto.TransactionListDto;
 import ru.egorov.bankaccount.bank.entity.Transaction;
 import ru.egorov.bankaccount.bank.enums.ExpenseCategory;
 import ru.egorov.bankaccount.bank.service.TransactionService;
@@ -23,9 +24,15 @@ public class TransactionController {
         this.transactionService = transactionService;
     }
 
-    @GetMapping("transaction/all")
+    @GetMapping("/transaction/all")
     public ResponseEntity<List<Transaction>> getTransactions(@RequestParam String accountNumber) {
         return ResponseEntity.ok(transactionService.findTransactionsByAccountNumber(accountNumber));
+    }
+
+    @GetMapping("/transaction/convert/all")
+    public ResponseEntity<TransactionListDto> getTransactions(@RequestParam String accountNumber,
+                                                              @RequestParam String currency) {
+        return ResponseEntity.ok(transactionService.findTransactionsByAccountNumberConvertCurrency(accountNumber, currency));
     }
 
     @PostMapping("/transaction")
@@ -51,4 +58,5 @@ public class TransactionController {
         return transactionService.calculateSumTransactionsThisMonth(accountNumber, category)
                 .doubleValue();
     }
+
 }

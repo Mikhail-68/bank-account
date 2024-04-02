@@ -27,5 +27,12 @@ public interface DataCurrencyService {
      * @param value валюта
      * @return значение стоимости валюты
      */
-    BigDecimal getCurrentValuePairsDefault(String value);
+    BigDecimal getCurrentValuePairsToDefault(String value);
+
+    /**
+     * Возвращает курс валюты, конвертированный из валюты БД по-умолчанию
+     * @param value валюта
+     * @return значение стоимости валюты
+     */
+    BigDecimal getCurrentValuePairsFromDefault(String value);
 }

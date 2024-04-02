@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 public class NewTransactionDTO {
     @Pattern(regexp = "[\\d]{1,10}", message = "Номер аккаунта должен состоять из цифр и его длина должна быть от 1 до 10 символов")
     private String accountFrom;

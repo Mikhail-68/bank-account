@@ -5,8 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.egorov.bankaccount.bank.dto.in.NewTransactionDTO;
+import ru.egorov.bankaccount.bank.dto.outDto.TransactionListDto;
 import ru.egorov.bankaccount.bank.entity.Transaction;
 import ru.egorov.bankaccount.bank.enums.ExpenseCategory;
+import ru.egorov.bankaccount.bank.mapper.TransactionMapper;
 import ru.egorov.bankaccount.bank.repository.TransactionRepository;
 import ru.egorov.bankaccount.bank.service.ClientService;
 import ru.egorov.bankaccount.bank.service.LimitService;
@@ -25,18 +27,31 @@ public class TransactionServiceImpl implements TransactionService {
     private final ClientService clientService;
     private final LimitService limitService;
     private final DataCurrencyService currencyService;
+    private final TransactionMapper transactionMapper;
 
     @Autowired
-    public TransactionServiceImpl(TransactionRepository transactionRepository, ClientService clientService, LimitService limitService, DataCurrencyService currencyService) {
+    public TransactionServiceImpl(TransactionRepository transactionRepository, ClientService clientService, LimitService limitService, DataCurrencyService currencyService, TransactionMapper transactionMapper) {
         this.transactionRepository = transactionRepository;
         this.clientService = clientService;
         this.limitService = limitService;
         this.currencyService = currencyService;
+        this.transactionMapper = transactionMapper;
     }
 
     @Override
     public List<Transaction> findTransactionsByAccountNumber(String accountNumber) {
         return transactionRepository.findByClient(accountNumber);
+    }
+
+    @Override
+    public TransactionListDto findTransactionsByAccountNumberConvertCurrency(String accountNumber, String currency) {
+        List<Transaction> listTransactions = transactionRepository.findByClient(accountNumber);
+        BigDecimal exchangeRate = currencyService.getCurrentValuePairsFromDefault(currency);
+        listTransactions.forEach(transaction -> transaction.setSum(
+                RoundingBigDecimal.roundBigDecimal(transaction.getSum().multiply(exchangeRate))
+        ));
+        return new TransactionListDto(currency,
+                transactionMapper.toTransactionDtoList(listTransactions));
     }
 
     @Override
@@ -48,7 +63,7 @@ public class TransactionServiceImpl implements TransactionService {
         clientService.saveClientIfDoesNotExist(transactionDTO.getAccountTo());
 
         log.debug("Конвертируем валюту");
-        BigDecimal sumUsd = currencyService.getCurrentValuePairsDefault(transactionDTO.getCurrency())
+        BigDecimal sumUsd = currencyService.getCurrentValuePairsToDefault(transactionDTO.getCurrency())
                 .multiply(BigDecimal.valueOf(transactionDTO.getSum()));
         sumUsd = RoundingBigDecimal.roundBigDecimal(sumUsd);
 
