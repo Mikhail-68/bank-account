@@ -10,6 +10,7 @@ import java.util.List;
 public abstract class TransactionMapper {
     public TransactionDto toTransactionDtoList(Transaction transaction) {
         return new TransactionDto(
+                transaction.getClientTo().getAccountNumber(),
                 transaction.getSum().doubleValue(),
                 transaction.getExpenseCategory(),
                 transaction.getDate(),

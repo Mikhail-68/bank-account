@@ -20,15 +20,18 @@ public class Transaction {
     private int id;
     @ManyToOne(cascade = CascadeType.ALL)
     private Client client;
+    @ManyToOne(cascade = CascadeType.ALL)
+    private Client clientTo;
     private LocalDateTime date;
     private BigDecimal sum;
     private boolean limitExceeded;
     @Enumerated(EnumType.STRING)
     private ExpenseCategory expenseCategory;
 
-    public Transaction(Client client, LocalDateTime date, BigDecimal sum,
+    public Transaction(Client client, Client clientTo, LocalDateTime date, BigDecimal sum,
                        boolean limitExceeded, ExpenseCategory expenseCategory) {
         this.client = client;
+        this.clientTo = clientTo;
         this.date = date;
         this.sum = sum;
         this.limitExceeded = limitExceeded;

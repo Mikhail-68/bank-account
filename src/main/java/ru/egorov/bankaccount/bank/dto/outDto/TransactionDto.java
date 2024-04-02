@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TransactionDto {
+    private String clientTo;
     private double sum;
     private ExpenseCategory expenseCategory;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")

@@ -67,12 +67,12 @@ public class TransactionServiceImpl implements TransactionService {
                 .multiply(BigDecimal.valueOf(transactionDTO.getSum()));
         sumUsd = RoundingBigDecimal.roundBigDecimal(sumUsd);
 
-        saveTransaction(transactionDTO, transactionDTO.getAccountTo(), sumUsd);
-        saveTransaction(transactionDTO, transactionDTO.getAccountFrom(), sumUsd.negate());
+        saveTransaction(transactionDTO, transactionDTO.getAccountTo(), transactionDTO.getAccountFrom(), sumUsd);
+        saveTransaction(transactionDTO, transactionDTO.getAccountFrom(), transactionDTO.getAccountTo(), sumUsd.negate());
         log.info("Новая транзакция создана");
     }
 
-    private void saveTransaction(NewTransactionDTO transactionDTO, String accountNumber, BigDecimal sumUsd) {
+    private void saveTransaction(NewTransactionDTO transactionDTO, String accountNumber, String accountNumberTo, BigDecimal sumUsd) {
         log.debug("Создаем транзакцию для номера счета: " + accountNumber);
 
         BigDecimal limit = limitService.getLastLimitThisMonth(accountNumber, transactionDTO.getExpenseCategory()).getSum();
@@ -82,6 +82,7 @@ public class TransactionServiceImpl implements TransactionService {
 
         transactionRepository.save(new Transaction(
                 clientService.findClientByAccountNumber(accountNumber).get(),
+                clientService.findClientByAccountNumber(accountNumberTo).get(),
                 transactionDTO.getDate(),
                 sumUsd,
                 limitExceeded,
