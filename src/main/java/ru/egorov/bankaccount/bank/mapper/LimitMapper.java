@@ -1,7 +1,7 @@
 package ru.egorov.bankaccount.bank.mapper;
 
 import org.mapstruct.Mapper;
-import ru.egorov.bankaccount.bank.dto.out.LimitDTO;
+import ru.egorov.bankaccount.bank.dto.outDto.LimitDTO;
 import ru.egorov.bankaccount.bank.entity.Limit;
 
 import java.util.List;

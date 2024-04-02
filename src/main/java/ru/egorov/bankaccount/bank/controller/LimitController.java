@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import ru.egorov.bankaccount.bank.dto.out.LimitDTO;
+import ru.egorov.bankaccount.bank.dto.outDto.LimitDTO;
 import ru.egorov.bankaccount.bank.dto.in.SaveLimitDTO;
 import ru.egorov.bankaccount.bank.entity.Limit;
 import ru.egorov.bankaccount.bank.enums.ExpenseCategory;
@@ -43,7 +43,10 @@ public class LimitController {
         if(bindingResult.hasErrors()) {
             return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
         }
-        limitService.saveNewLimit(newLimit.getClientAccountNumber(), newLimit.getSum(), newLimit.getExpenseCategory());
+        limitService.saveNewLimit(newLimit.getClientAccountNumber(),
+                newLimit.getSum(),
+                newLimit.getCurrency(),
+                newLimit.getExpenseCategory());
         return ResponseEntity.accepted().build();
     }
 

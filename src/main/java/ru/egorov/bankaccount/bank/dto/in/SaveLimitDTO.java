@@ -17,6 +17,7 @@ public class SaveLimitDTO {
     private String clientAccountNumber;
     @Min(value = 0, message = "Сумма лимита должна быть больше 0")
     private double sum;
+    private String currency;
     private ExpenseCategory expenseCategory;
 }
 

@@ -1,6 +1,6 @@
 package ru.egorov.bankaccount.bank.service;
 
-import ru.egorov.bankaccount.bank.dto.out.LimitDTO;
+import ru.egorov.bankaccount.bank.dto.outDto.LimitDTO;
 import ru.egorov.bankaccount.bank.entity.Limit;
 import ru.egorov.bankaccount.bank.enums.ExpenseCategory;
 
@@ -38,9 +38,10 @@ public interface LimitService {
      *
      * @param accountNumber   номер счета клиента
      * @param sum             лимит
+     * @param currency        валюта лимита
      * @param expenseCategory категория расходов
      */
-    void saveNewLimit(String accountNumber, double sum, ExpenseCategory expenseCategory);
+    void saveNewLimit(String accountNumber, double sum, String currency, ExpenseCategory expenseCategory);
 
     /**
      * Устанавливает лимиты по-умолчанию, если не установлен ни один лимит в текущем месяце

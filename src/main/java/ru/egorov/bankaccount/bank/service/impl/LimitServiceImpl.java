@@ -5,13 +5,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.egorov.bankaccount.bank.dto.out.LimitDTO;
+import ru.egorov.bankaccount.bank.dto.outDto.LimitDTO;
 import ru.egorov.bankaccount.bank.entity.Limit;
 import ru.egorov.bankaccount.bank.enums.ExpenseCategory;
 import ru.egorov.bankaccount.bank.mapper.LimitMapper;
 import ru.egorov.bankaccount.bank.repository.LimitRepository;
 import ru.egorov.bankaccount.bank.service.LimitService;
 import ru.egorov.bankaccount.bank.utils.RoundingBigDecimal;
+import ru.egorov.bankaccount.datacurrencypairs.service.DataCurrencyService;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -27,11 +28,13 @@ public class LimitServiceImpl implements LimitService {
 
     private final LimitRepository limitRepository;
     private final LimitMapper limitMapper;
+    private final DataCurrencyService currencyService;
 
     @Autowired
-    public LimitServiceImpl(LimitRepository limitRepository, LimitMapper limitMapper) {
+    public LimitServiceImpl(LimitRepository limitRepository, LimitMapper limitMapper, DataCurrencyService currencyService) {
         this.limitRepository = limitRepository;
         this.limitMapper = limitMapper;
+        this.currencyService = currencyService;
     }
 
     @Override
@@ -53,10 +56,12 @@ public class LimitServiceImpl implements LimitService {
     }
 
     @Override
-    public void saveNewLimit(String accountNumber, double sum, ExpenseCategory expenseCategory) {
+    public void saveNewLimit(String accountNumber, double sum, String currency, ExpenseCategory expenseCategory) {
         log.debug("Сохранение нового лимита для счета: " + accountNumber);
-        BigDecimal bigDecimal = RoundingBigDecimal.roundBigDecimal(sum);
-        limitRepository.save(accountNumber, bigDecimal.doubleValue(), expenseCategory.name());
+        BigDecimal currencyConvert = currencyService.getCurrentValuePairsDefault(currency)
+                .multiply(BigDecimal.valueOf(sum));
+        currencyConvert = RoundingBigDecimal.roundBigDecimal(currencyConvert);
+        limitRepository.save(accountNumber, currencyConvert.doubleValue(), expenseCategory.name());
     }
 
     @Override

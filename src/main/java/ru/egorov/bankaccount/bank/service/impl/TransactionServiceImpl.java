@@ -2,7 +2,6 @@ package ru.egorov.bankaccount.bank.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.egorov.bankaccount.bank.dto.in.NewTransactionDTO;
@@ -22,9 +21,6 @@ import java.util.List;
 @Service
 public class TransactionServiceImpl implements TransactionService {
 
-    @Value("${application.db.currency}")
-    private String currencyDb;
-
     private final TransactionRepository transactionRepository;
     private final ClientService clientService;
     private final LimitService limitService;
@@ -43,7 +39,6 @@ public class TransactionServiceImpl implements TransactionService {
         return transactionRepository.findByClient(accountNumber);
     }
 
-
     @Override
     @Transactional
     public void createTransaction(NewTransactionDTO transactionDTO) {
@@ -52,8 +47,8 @@ public class TransactionServiceImpl implements TransactionService {
         clientService.saveClientIfDoesNotExist(transactionDTO.getAccountFrom());
         clientService.saveClientIfDoesNotExist(transactionDTO.getAccountTo());
 
-        log.debug("Пересчитываем валюту в " + currencyDb);
-        BigDecimal sumUsd = currencyService.getCurrentValuePairs(transactionDTO.getCurrency(), currencyDb)
+        log.debug("Конвертируем валюту");
+        BigDecimal sumUsd = currencyService.getCurrentValuePairsDefault(transactionDTO.getCurrency())
                 .multiply(BigDecimal.valueOf(transactionDTO.getSum()));
         sumUsd = RoundingBigDecimal.roundBigDecimal(sumUsd);
 

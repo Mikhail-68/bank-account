@@ -21,4 +21,11 @@ public interface DataCurrencyService {
      * @throws IllegalArgumentException при неправильном формате ценных бумаг
      */
     BigDecimal getCurrentValuePairs(String value1, String value2);
+
+    /**
+     * Возвращает курс валюты, относительно заданной валюты базы данных
+     * @param value валюта
+     * @return значение стоимости валюты
+     */
+    BigDecimal getCurrentValuePairsDefault(String value);
 }

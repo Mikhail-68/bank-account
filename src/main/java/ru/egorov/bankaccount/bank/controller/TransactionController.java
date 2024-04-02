@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import ru.egorov.bankaccount.bank.dto.out.MessageDTO;
+import ru.egorov.bankaccount.bank.dto.outDto.MessageDTO;
 import ru.egorov.bankaccount.bank.dto.in.NewTransactionDTO;
 import ru.egorov.bankaccount.bank.entity.Transaction;
 import ru.egorov.bankaccount.bank.enums.ExpenseCategory;

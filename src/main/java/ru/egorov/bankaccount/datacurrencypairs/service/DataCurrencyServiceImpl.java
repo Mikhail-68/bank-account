@@ -11,6 +11,8 @@ import ru.egorov.bankaccount.datacurrencypairs.repository.CurrencyCacheRepositor
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -19,6 +21,8 @@ public class DataCurrencyServiceImpl implements DataCurrencyService {
 
     @Value("${application.twelvedata.apikey}")
     private String apiKey;
+    @Value("${application.db.currency}")
+    private String currencyDb;
     private final RestTemplate restTemplate = new RestTemplate();
 
     private final CurrencyCacheRepository cacheRepository;
@@ -32,9 +36,12 @@ public class DataCurrencyServiceImpl implements DataCurrencyService {
     public BigDecimal getCurrentValue(String value) {
         log.debug("Получение валюты: " + value);
 
-        if(value.equals(new StringBuilder(value).reverse().toString()) && value.contains("/")) {
-            log.debug("Возврат валюты: 1. Так как валюты одинаковы (пример: USD/USD)");
-            return BigDecimal.ONE;
+        if(value.contains("/") && value.indexOf("/") == value.lastIndexOf("/")) {
+            String[] str = value.split("/");
+            if(str[0].equals(str[1])) {
+                log.debug("Возврат валюты: 1. Так как валюты одинаковы (пример: USD/USD)");
+                return BigDecimal.ONE;
+            }
         }
 
         Optional<CurrencyCache> currencyCache = cacheRepository.findById(value);
@@ -60,5 +67,10 @@ public class DataCurrencyServiceImpl implements DataCurrencyService {
     @Override
     public BigDecimal getCurrentValuePairs(String value1, String value2) {
         return getCurrentValue(value1 + "/" + value2);
+    }
+
+    @Override
+    public BigDecimal getCurrentValuePairsDefault(String value) {
+        return getCurrentValuePairs(value, currencyDb);
     }
 }
