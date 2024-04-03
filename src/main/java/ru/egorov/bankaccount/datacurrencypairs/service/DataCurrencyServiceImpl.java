@@ -47,6 +47,7 @@ public class DataCurrencyServiceImpl implements DataCurrencyService {
         Optional<CurrencyCache> currencyCache = cacheRepository.findById(value);
         if (currencyCache.isPresent() && currencyCache.get().getDate().equals(LocalDate.now()) && currencyCache.get().getValue() != null) {
             log.debug("Получение валюты из кэша");
+            log.debug("Курс валюты: " + currencyCache.get().getValue());
             return currencyCache.get().getValue();
         }
 
@@ -56,9 +57,12 @@ public class DataCurrencyServiceImpl implements DataCurrencyService {
                 value, apiKey
         ), CurrencyDto.class);
 
+
+
         if(currencyDto == null || currencyDto.getValue() == null) {
             throw new IllegalArgumentException("Неправильный формат обозначения ценной бумаги");
         }
+        log.debug("Курс валюты: " + currencyDto.getValue());
         log.debug("Кэшируем полученные данные в БД");
         cacheRepository.save(new CurrencyCache(value, LocalDate.now(), currencyDto.getValue()));
         return currencyDto.getValue();

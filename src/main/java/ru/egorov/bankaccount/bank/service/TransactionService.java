@@ -2,6 +2,7 @@ package ru.egorov.bankaccount.bank.service;
 
 import ru.egorov.bankaccount.bank.dto.in.NewTransactionDTO;
 import ru.egorov.bankaccount.bank.dto.outDto.TransactionListDto;
+import ru.egorov.bankaccount.bank.dto.outDto.TransactionWithLimitDto;
 import ru.egorov.bankaccount.bank.entity.Transaction;
 import ru.egorov.bankaccount.bank.enums.ExpenseCategory;
 
@@ -26,6 +27,23 @@ public interface TransactionService {
      * @return список транзакций в выбранной валюте
      */
     TransactionListDto findTransactionsByAccountNumberConvertCurrency(String accountNumber, String currency);
+
+    /**
+     * Возвращает транзакции, превысившие лимит
+     *
+     * @param accountNumber номер счета клиента
+     * @return Список транзакций, превысивших лимит
+     */
+    List<TransactionWithLimitDto> findExceededLimitTransactions(String accountNumber);
+
+    /**
+     * Возвращает транзакции, превысившие лимит, в выбранной валюте
+     *
+     * @param accountNumber номер счета клиента
+     * @param currency      валюта
+     * @return список транзакций с лимитами, которые они превысили
+     */
+    List<TransactionWithLimitDto> findExceededLimitTransactionsConvertCurrency(String accountNumber, String currency);
 
     void createTransaction(NewTransactionDTO transactionDTO);
 

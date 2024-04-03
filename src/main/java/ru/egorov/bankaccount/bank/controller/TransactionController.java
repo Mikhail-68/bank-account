@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.egorov.bankaccount.bank.dto.in.NewTransactionDTO;
 import ru.egorov.bankaccount.bank.dto.outDto.MessageDTO;
 import ru.egorov.bankaccount.bank.dto.outDto.TransactionListDto;
+import ru.egorov.bankaccount.bank.dto.outDto.TransactionWithLimitDto;
 import ru.egorov.bankaccount.bank.entity.Transaction;
 import ru.egorov.bankaccount.bank.enums.ExpenseCategory;
 import ru.egorov.bankaccount.bank.service.TransactionService;
@@ -33,6 +34,18 @@ public class TransactionController {
     public ResponseEntity<TransactionListDto> getTransactions(@RequestParam String accountNumber,
                                                               @RequestParam String currency) {
         return ResponseEntity.ok(transactionService.findTransactionsByAccountNumberConvertCurrency(accountNumber, currency));
+    }
+
+    @GetMapping("/transaction/exceeded")
+    public ResponseEntity<List<TransactionWithLimitDto>> getExceededLimitTransactions(@RequestParam String accountNumber) {
+        return ResponseEntity.ok(transactionService.findExceededLimitTransactions(accountNumber));
+    }
+
+    @GetMapping("/transaction/convert/exceeded")
+    public ResponseEntity<List<TransactionWithLimitDto>> getExceededLimitTransactionsConvertCurrency(
+            @RequestParam String accountNumber,
+            @RequestParam String currency) {
+        return ResponseEntity.ok(transactionService.findExceededLimitTransactionsConvertCurrency(accountNumber, currency));
     }
 
     @PostMapping("/transaction")

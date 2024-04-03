@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.egorov.bankaccount.bank.entity.Client;
 import ru.egorov.bankaccount.bank.entity.Limit;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,7 +21,7 @@ public interface LimitRepository extends JpaRepository<Limit, Integer> {
             nativeQuery = true)
     void save(String accountNumber, double sum, String expenseCategory);
 
-    @Query("SELECT l FROM Limit l WHERE l.client.accountNumber=:accountNumber ORDER BY l.id DESC")
+    @Query("SELECT l FROM Limit l WHERE l.client.accountNumber=:accountNumber ORDER BY l.date DESC")
     List<Limit> findByAccountNumberClient(@Param("accountNumber") String accountNumber);
 
     List<Limit> findByClientOrderByDateDesc(Client client);

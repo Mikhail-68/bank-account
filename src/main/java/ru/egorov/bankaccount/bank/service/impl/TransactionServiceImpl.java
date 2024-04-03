@@ -5,7 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.egorov.bankaccount.bank.dto.in.NewTransactionDTO;
+import ru.egorov.bankaccount.bank.dto.outDto.LimitDTO;
 import ru.egorov.bankaccount.bank.dto.outDto.TransactionListDto;
+import ru.egorov.bankaccount.bank.dto.outDto.TransactionWithLimitDto;
 import ru.egorov.bankaccount.bank.entity.Transaction;
 import ru.egorov.bankaccount.bank.enums.ExpenseCategory;
 import ru.egorov.bankaccount.bank.mapper.TransactionMapper;
@@ -17,6 +19,7 @@ import ru.egorov.bankaccount.bank.utils.RoundingBigDecimal;
 import ru.egorov.bankaccount.datacurrencypairs.service.DataCurrencyService;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -47,11 +50,57 @@ public class TransactionServiceImpl implements TransactionService {
     public TransactionListDto findTransactionsByAccountNumberConvertCurrency(String accountNumber, String currency) {
         List<Transaction> listTransactions = transactionRepository.findByClient(accountNumber);
         BigDecimal exchangeRate = currencyService.getCurrentValuePairsFromDefault(currency);
+        log.debug("Конвертация валюты транзакции");
         listTransactions.forEach(transaction -> transaction.setSum(
                 RoundingBigDecimal.roundBigDecimal(transaction.getSum().multiply(exchangeRate))
         ));
         return new TransactionListDto(currency,
-                transactionMapper.toTransactionDtoList(listTransactions));
+                transactionMapper.toTransactionDto(listTransactions));
+    }
+
+    public List<TransactionWithLimitDto> findExceededLimitTransactions(String accountNumber) {
+        List<Transaction> transactions = transactionRepository.findWhoExceededLimit(accountNumber);
+        List<LimitDTO> limit = limitService.getLimitByClient(accountNumber);
+
+        List<TransactionWithLimitDto> transactionWithLimit = new ArrayList<>();
+
+        int i = 0;
+        for (Transaction transaction : transactions) {
+            while (i < limit.size()) {
+                if (transaction.getDate().isAfter(limit.get(i).getDate())) {
+                    transactionWithLimit.add(
+                            transactionMapper.toTransactionWithLimitDto(transaction, limit.get(i))
+                    );
+                    break;
+                } else {
+                    i++;
+                }
+            }
+        }
+        return transactionWithLimit;
+    }
+
+    public List<TransactionWithLimitDto> findExceededLimitTransactionsConvertCurrency(String accountNumber, String currency) {
+        List<TransactionWithLimitDto> transactions = findExceededLimitTransactions(accountNumber);
+
+        BigDecimal exchangeRate = currencyService.getCurrentValuePairsFromDefault(currency);
+        log.debug("Конвертация валюты транзакций и лимитов");
+        transactions.forEach(transaction -> {
+                    transaction.setSum(
+                            RoundingBigDecimal.roundBigDecimal(BigDecimal.valueOf(transaction.getSum()).multiply(exchangeRate)).doubleValue()
+                    );
+                    LimitDTO limitDTO = transaction.getLimit();
+                    transaction.setLimit(new LimitDTO(
+                            limitDTO.getId(),
+                            limitDTO.getDate(),
+                            RoundingBigDecimal.roundBigDecimal(
+                                    BigDecimal.valueOf(limitDTO.getSum()).multiply(exchangeRate)
+                            ).doubleValue(),
+                            limitDTO.getExpenseCategory()
+                    ));
+                }
+        );
+        return transactions;
     }
 
     @Override
@@ -76,9 +125,14 @@ public class TransactionServiceImpl implements TransactionService {
         log.debug("Создаем транзакцию для номера счета: " + accountNumber);
 
         BigDecimal limit = limitService.getLastLimitThisMonth(accountNumber, transactionDTO.getExpenseCategory()).getSum();
-        BigDecimal currentSum = calculateSumTransactionsThisMonth(accountNumber, transactionDTO.getExpenseCategory())
-                .add(sumUsd);
-        boolean limitExceeded = currentSum.doubleValue() > limit.doubleValue();
+        boolean limitExceeded;
+        if (sumUsd.doubleValue() < 0) {
+            BigDecimal currentSum = calculateSumTransactionsThisMonth(accountNumber, transactionDTO.getExpenseCategory())
+                    .add(sumUsd.abs());
+            limitExceeded = currentSum.doubleValue() > limit.doubleValue();
+        } else {
+            limitExceeded = false;
+        }
 
         transactionRepository.save(new Transaction(
                 clientService.findClientByAccountNumber(accountNumber).get(),
