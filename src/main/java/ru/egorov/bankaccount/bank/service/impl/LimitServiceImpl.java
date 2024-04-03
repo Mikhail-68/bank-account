@@ -39,11 +39,13 @@ public class LimitServiceImpl implements LimitService {
 
     @Override
     public Optional<Limit> getLimitById(int id) {
+        log.debug("Получение лимита по его id");
         return limitRepository.findById(id);
     }
 
     @Override
     public List<LimitDTO> getLimitByClient(String accountNumber) {
+        log.debug("Получение лимита по номеру счета клиента");
         return limitMapper.toLimitDTOList(limitRepository.findByAccountNumberClient(accountNumber));
     }
 
@@ -57,17 +59,17 @@ public class LimitServiceImpl implements LimitService {
 
     @Override
     public void saveNewLimit(String accountNumber, double sum, String currency, ExpenseCategory expenseCategory) {
-        log.debug("Сохранение нового лимита для счета: " + accountNumber);
         BigDecimal currencyConvert = currencyService.getCurrentValuePairsToDefault(currency)
                 .multiply(BigDecimal.valueOf(sum));
         currencyConvert = RoundingBigDecimal.roundBigDecimal(currencyConvert);
+        log.debug("Сохранение нового лимита для счета: " + accountNumber);
         limitRepository.save(accountNumber, currencyConvert.doubleValue(), expenseCategory.name());
     }
 
     @Override
     public void setDefaultLimitsIfNotExistLimitsThisMonth(String accountNumber) {
-        for(var category : ExpenseCategory.values()) {
-            if(limitRepository.getLastLimitThisMonth(accountNumber, category.name()).isEmpty()) {
+        for (var category : ExpenseCategory.values()) {
+            if (limitRepository.getLastLimitThisMonth(accountNumber, category.name()).isEmpty()) {
                 log.debug("Установка дефолтного лимита для счета: " + accountNumber + " и типа расхода: " + category.name());
                 limitRepository.save(accountNumber, startLimitValue, category.name());
             }

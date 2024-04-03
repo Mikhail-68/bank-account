@@ -4,8 +4,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.data.cassandra.DataCassandraTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.BootstrapWith;
 import ru.egorov.bankaccount.bank.entity.Client;
 import ru.egorov.bankaccount.bank.entity.Limit;
 import ru.egorov.bankaccount.bank.enums.ExpenseCategory;
@@ -20,6 +22,8 @@ import java.util.List;
 //        classes = WavefrontProperties.Application.class
 //)
 @SpringBootTest
+//@DataCassandraTest
+//@BootstrapWith()
 @ActiveProfiles("test")
 public class LimitServiceTest {
     @Autowired

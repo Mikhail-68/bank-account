@@ -11,8 +11,6 @@ import ru.egorov.bankaccount.datacurrencypairs.repository.CurrencyCacheRepositor
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -36,9 +34,9 @@ public class DataCurrencyServiceImpl implements DataCurrencyService {
     public BigDecimal getCurrentValue(String value) {
         log.debug("Получение валюты: " + value);
 
-        if(value.contains("/") && value.indexOf("/") == value.lastIndexOf("/")) {
+        if (value.contains("/") && value.indexOf("/") == value.lastIndexOf("/")) {
             String[] str = value.split("/");
-            if(str[0].equals(str[1])) {
+            if (str[0].equals(str[1])) {
                 log.debug("Возврат валюты: 1. Так как валюты одинаковы (пример: USD/USD)");
                 return BigDecimal.ONE;
             }
@@ -58,8 +56,8 @@ public class DataCurrencyServiceImpl implements DataCurrencyService {
         ), CurrencyDto.class);
 
 
-
-        if(currencyDto == null || currencyDto.getValue() == null) {
+        if (currencyDto == null || currencyDto.getValue() == null) {
+            log.error("Неправильный формат обозначения ценной бумаги");
             throw new IllegalArgumentException("Неправильный формат обозначения ценной бумаги");
         }
         log.debug("Курс валюты: " + currencyDto.getValue());

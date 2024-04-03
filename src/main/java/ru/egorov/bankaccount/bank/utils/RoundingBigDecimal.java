@@ -10,9 +10,11 @@ public class RoundingBigDecimal {
     public static BigDecimal roundBigDecimal(BigDecimal value) {
         return value.setScale(ROUNDING_SCALE, ROUNDING_MODE);
     }
+
     public static BigDecimal roundBigDecimal(long value) {
         return BigDecimal.valueOf(value).setScale(ROUNDING_SCALE, ROUNDING_MODE);
     }
+
     public static BigDecimal roundBigDecimal(double value) {
         return BigDecimal.valueOf(value).setScale(ROUNDING_SCALE, ROUNDING_MODE);
     }
