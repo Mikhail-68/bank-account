@@ -3,6 +3,10 @@ application:
   limit.startValue: 1000
   db.currency: USD
 
+springdoc:
+  swagger-ui:
+    path: '/documentation'
+
 spring:
   application.name: 'bank-account'
 
