@@ -49,6 +49,7 @@ public class DataCurrencyServiceImpl implements DataCurrencyService {
             return currencyCache.get().getValue();
         }
 
+        log.debug(apiKey);
         log.debug("Получение курса валюты из API");
         CurrencyDto currencyDto = restTemplate.getForObject(String.format(
                 "https://api.twelvedata.com/eod?symbol=%s&apikey=%s",

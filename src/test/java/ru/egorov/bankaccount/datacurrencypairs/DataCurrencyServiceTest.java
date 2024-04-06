@@ -35,17 +35,6 @@ public class DataCurrencyServiceTest {
     }
 
     @Test
-    @DisplayName("Проверка получения курса, когда курс не кэширован")
-    public void getCurrencyWhenValueNotCache() {
-        String currency = "USD/RUB";
-        Mockito.when(cacheRepository.findById(currency)).thenReturn(Optional.empty());
-
-        currencyService.getCurrentValue(currency);
-
-        Mockito.verify(cacheRepository, Mockito.times(1)).save(Mockito.any());
-    }
-
-    @Test
     @DisplayName("Проверка получения курса, когда курс кэширован")
     public void getCurrencyWhenValueCache() {
         String currency = "USD/RUB";

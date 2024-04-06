@@ -31,6 +31,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Intege
     Optional<BigDecimal> calculateSumTransactionsThisMonth(String accountNumber,
                                                            String expenseCategory);
 
-    @Query("SELECT t FROM Transaction t WHERE t.limitExceeded = true ORDER BY t.date DESC")
+    @Query("SELECT t FROM Transaction t WHERE t.client.accountNumber = :accountNumber AND t.limitExceeded = true ORDER BY t.date DESC")
     List<Transaction> findWhoExceededLimit(String accountNumber);
 }

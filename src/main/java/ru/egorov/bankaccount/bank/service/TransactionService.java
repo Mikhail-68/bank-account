@@ -12,7 +12,7 @@ import java.util.List;
 public interface TransactionService {
 
     /**
-     * Возвращает список транзакций клиента а валюте БД
+     * Возвращает список транзакций клиента в валюте БД
      *
      * @param accountNumber номер счета клиента
      * @return список транзакций

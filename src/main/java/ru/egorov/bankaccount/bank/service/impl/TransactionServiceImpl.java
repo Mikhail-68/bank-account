@@ -8,6 +8,7 @@ import ru.egorov.bankaccount.bank.dto.in.NewTransactionDTO;
 import ru.egorov.bankaccount.bank.dto.outDto.LimitDTO;
 import ru.egorov.bankaccount.bank.dto.outDto.TransactionListDto;
 import ru.egorov.bankaccount.bank.dto.outDto.TransactionWithLimitDto;
+import ru.egorov.bankaccount.bank.entity.Limit;
 import ru.egorov.bankaccount.bank.entity.Transaction;
 import ru.egorov.bankaccount.bank.enums.ExpenseCategory;
 import ru.egorov.bankaccount.bank.mapper.TransactionMapper;
@@ -60,20 +61,17 @@ public class TransactionServiceImpl implements TransactionService {
 
     public List<TransactionWithLimitDto> findExceededLimitTransactions(String accountNumber) {
         List<Transaction> transactions = transactionRepository.findWhoExceededLimit(accountNumber);
-        List<LimitDTO> limit = limitService.getLimitByClient(accountNumber);
+        List<LimitDTO> limits = limitService.getLimitByClient(accountNumber);
 
         List<TransactionWithLimitDto> transactionWithLimit = new ArrayList<>();
 
-        int i = 0;
         for (Transaction transaction : transactions) {
-            while (i < limit.size()) {
-                if (transaction.getDate().isAfter(limit.get(i).getDate())) {
+            for(LimitDTO limit : limits) {
+                if (transaction.getExpenseCategory().equals(limit.getExpenseCategory()) && transaction.getDate().isAfter(limit.getDate())) {
                     transactionWithLimit.add(
-                            transactionMapper.toTransactionWithLimitDto(transaction, limit.get(i))
+                            transactionMapper.toTransactionWithLimitDto(transaction, limit)
                     );
                     break;
-                } else {
-                    i++;
                 }
             }
         }

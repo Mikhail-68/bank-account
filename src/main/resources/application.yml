@@ -44,6 +44,10 @@ spring:
     password: 'qwerty'
     driver-class-name: 'org.postgresql.Driver'
 
+  h2.console:
+    enabled: true
+    path: '/h2-console'
+
 
 logging:
   level:
