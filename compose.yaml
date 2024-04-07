@@ -1,5 +1,19 @@
 
 services:
+
+  bank-account-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8181:8080"
+    depends_on:
+      - cassandra
+      - postgres
+#    environment:
+#      - SERVER_PORT= 8181
+#      - SPRING_DATASOURCE_URL=jdbc:postgresql://service-db/books_db
+
   cassandra:
     image: 'cassandra:latest'
 #    restart: 'always'

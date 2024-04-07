@@ -10,7 +10,7 @@ springdoc:
 spring:
   application.name: 'bank-account'
 
-  docker.compose.profiles.active: [default, test]
+#  docker.compose.profiles.active: [default, test]
 
   liquibase:
     enabled: 'true'
@@ -18,19 +18,19 @@ spring:
     contexts: dev
 
   cassandra:
-    local-datacenter: 'datacenter1'
+    local-datacenter: 'dc1'
     keyspace-name: 'currencyCache'
-#    schema-action: 'RECREATE'
-
-    keyspace.create: "CREATE KEYSPACE currencyCache WITH replication = {'class': 'NetworkTopologyStrategy', 'DC1': 1};"
+    schema-action: CREATE_IF_NOT_EXISTS
+    keyspace.create: "CREATE KEYSPACE currencyCache WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1};"
+    contact-points: 'cassandra'
 
   data:
     cassandra:
-      local-datacenter: 'datacenter1'
+      local-datacenter: 'dc1'
       keyspace-name: 'currencyCache'
-      port: '9142'
-      contactpoints: 'localhost'
-
+      port: '9042'
+      schema-action: CREATE_IF_NOT_EXISTS
+      create-keyspace: true
 
   jpa:
     show-sql: true
@@ -39,18 +39,18 @@ spring:
     hibernate.ddl-auto: none
 
   datasource:
-    url: 'jdbc:postgresql://localhost:5430/bankdb'
+    url: 'jdbc:postgresql://postgres:5432/bankdb'
     username: 'postgres'
     password: 'qwerty'
     driver-class-name: 'org.postgresql.Driver'
 
   h2.console:
-    enabled: true
+    enabled: false
     path: '/h2-console'
 
 
 logging:
   level:
-    org.springframework.web: ERROR
+    org.springframework.web: DEBUG
     ru.egorov: DEBUG
     org.hibernate.engine.transaction.internal.TransactionImpl: DEBUG
