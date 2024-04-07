@@ -1,0 +1,25 @@
+
+services:
+  cassandra:
+    image: 'cassandra:latest'
+#    restart: 'always'
+    env_file: ./.env
+    environment:
+      - 'CASSANDRA_DC=dc1'
+      - 'CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch'
+    ports:
+      - '$CASSANDRA_LOCAL_PORT:9042'
+
+  postgres:
+    image: 'postgres:latest'
+#    restart: 'always'
+    env_file: ./.env
+    container_name: 'bank-postgres-db'
+    environment:
+      - 'POSTGRES_DB=$POSTGRESDB_DATABASE'
+      - 'POSTGRES_USER=$POSTGRESDB_USER'
+      - 'POSTGRES_PASSWORD=$POSTGRESDB_PASSWORD'
+    volumes:
+      - './data:/var/lib/postgresql/data'
+    ports:
+      - '$POSTGRESDB_LOCAL_PORT:5432'

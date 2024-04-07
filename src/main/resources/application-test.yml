@@ -1,0 +1,103 @@
+#application:
+#  twelvedata.apikey: '6e00d314e77840d4ac18eef23682f49f'
+#  limit.startValue: 1000
+#  db.currency: USD
+#
+#spring:
+#  application.name: 'bank-account'
+#
+#  docker.compose.profiles.active: [default, test]
+#
+#  liquibase:
+#    enabled: 'true'
+#    change-log: 'classpath:/db/changelog/changelog-master.xml'
+#    contexts: test
+#
+#  cassandra:
+#    local-datacenter: 'datacenter1'
+#    keyspace-name: 'currencyCache'
+#    schema-action: 'RECREATE'
+#    keyspace.create: "CREATE KEYSPACE currencyCache WITH replication = {'class': 'NetworkTopologyStrategy', 'DC1': 1};"
+#
+#  data:
+#    cassandra:
+#      local-datacenter: 'datacenter1'
+#      keyspace-name: 'currencyCache'
+#      port: '9142'
+#      contactpoints: 'localhost'
+#      schema-action: 'RECREATE'
+#
+#
+#  jpa:
+#    show-sql: true
+#    properties.hibernate.dialect: 'org.hibernate.dialect.H2Dialect'
+#    # Hibernate ddl auto (create, create-drop, validate, update)
+#    hibernate.ddl-auto: none
+#    database-platform: org.hibernate.dialect.H2Dialect
+#
+#  datasource:
+#    url: 'jdbc:h2:mem:testdb'
+#    username: 'postgres'
+#    password: 'qwerty'
+#    driver-class-name: 'org.h2.Driver'
+
+
+application:
+  twelvedata.apikey: '6e00d314e77840d4ac18eef23682f49f'
+  limit.startValue: 1000
+  db.currency: USD
+
+springdoc:
+  swagger-ui:
+    path: '/documentation'
+
+spring:
+  application.name: 'bank-account'
+
+  docker.compose.profiles.active: [default, test]
+
+  liquibase:
+    drop-first: true
+    enabled: 'true'
+    change-log: 'classpath:/db/changelog/changelog-master.xml'
+    contexts: test
+
+  cassandra:
+    local-datacenter: 'datacenter1'
+    keyspace-name: 'currencyCache'
+    #    schema-action: 'RECREATE'
+    keyspace.create: "CREATE KEYSPACE currencyCache WITH replication = {'class': 'NetworkTopologyStrategy', 'DC1': 1};"
+
+  data:
+    cassandra:
+      local-datacenter: 'datacenter1'
+      keyspace-name: 'currencyCache'
+      port: '9142'
+      contactpoints: 'localhost'
+
+
+  jpa:
+    show-sql: true
+    properties.hibernate.dialect: 'org.hibernate.dialect.H2Dialect'
+    # Hibernate ddl auto (create, create-drop, validate, update)
+    hibernate.ddl-auto: none
+
+    hibernate:
+      naming:
+        physical-strategy:datasource: 'org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl'
+
+    url: 'jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1'
+    username: 'postgres'
+    password: 'qwerty'
+    driver-class-name: 'org.h2.Driver'
+
+  h2.console:
+    enabled: false
+    path: '/h2-console'
+
+
+logging:
+  level:
+    org.springframework.web: ERROR
+    ru.egorov: DEBUG
+    org.hibernate.engine.transaction.internal.TransactionImpl: DEBUG
